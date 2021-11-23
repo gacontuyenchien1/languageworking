@@ -1,18 +1,49 @@
 @echo off
+set /a countNames=3
 set variableNames[1]=JT_HOSTNAME
 set variableNames[2]=JT_ORA_HOSTNAME
-
+set variableNames[3]=TEST1
+set confValues[1]=unset
 :main
     @rem call :testLoop
     @REM call :getValuesFromInc
     @REM call :testIf
     @REM call :testFunc
-    set gVal1=unset
-    call :getValues JT_ORA_HOSTNAME
-    echo returnVal2: %gVal1%
 
-    @REM call :testFunc
+    @REM set gVal1=unset
+    @REM call :getValues JT_ORA_HOSTNAME
+    @REM echo returnVal2: %gVal1%
+
+    set gVal1=unset
+    call :getAllValues
+
+    @REM call :replaceJSFile {JT_HOSTNAME},trongdz
+    @REM for /l %%i in (1,1,%countNames%) do call echo %%i- %%confValues[%%i]%%
 pause
+exit /b 0
+
+:getAllValues
+    @REM for /l %%i in (1,1,%countNames%) do (
+    @REM     call :getValues %%variableNames[%%i]%%
+    @REM     echo returnVal2: %gVal1%
+    @REM )
+    setlocal EnableDelayedExpansion
+        @REM Get all values to confValues array
+        for /l %%i in (1,1,%countNames%) do (
+            call :getValues !variableNames[%%i]!
+            echo returnVal2: !gVal1!
+            set confValues[%%i]=!gVal1!
+            echo confValues: !confValues[%%i]!
+        )
+        @REM for /l %%i in (1,1,%countNames%) do call echo %%i- !confValues[%%i]!
+        @REM replace in the file
+        for /l %%i in (1,1,%countNames%) do (
+            set searchVal={!variableNames[%%i]!}
+            set newVal=!confValues[%%i]!
+            echo. replace: !searchVal!,!newVal!
+            call :replaceJSFile !searchVal!,!newVal!
+        )
+    endlocal
 exit /b 0
 
 :testFunc
@@ -76,7 +107,8 @@ exit /b 0
 
 :getValues
     setlocal EnableDelayedExpansion
-        @REM echo ::getValues
+        echo.
+        echo ::called getValues
         @REM set searchVal=JT_HOSTNAME
         set searchVal=%1
         @REM echo !searchVal!
@@ -91,14 +123,13 @@ exit /b 0
             set value=!value: "=!
             set value="!value!"
             echo getValues !value!
-            
             goto :returnVal
-            @REM goto :eof
             exit /b 0
         )
         :returnVal
-        endlocal & ( set gVal1=%value% )
-    endlocal
+            endlocal & ( 
+                set "gVal1=%value%")
+            echo gVal1=%gVal1%
 goto :eof
 
 :testLoop
@@ -115,4 +146,19 @@ if defined Arr[%x%] (
    goto :SymLoop 
 )
 echo "The length of the array is" %x%
+exit /b 0
+
+:replaceJSFile
+    setlocal enableextensions disabledelayedexpansion
+    set search=%~1
+    set replace=%~2
+    @REM set search={JT_HOSTNAME}
+    @REM set replace=trongdz
+    set "textFile=C:\tmp\languageworking\bat\UnitTest1.txt"
+    for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+        set "line=%%i"
+        setlocal enabledelayedexpansion
+        >>"%textFile%" echo !line:%search%=%replace%!
+        endlocal
+    )
 exit /b 0
