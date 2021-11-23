@@ -1,8 +1,24 @@
 @echo off
-set /a countNames=3
-set variableNames[1]=JT_HOSTNAME
-set variableNames[2]=JT_ORA_HOSTNAME
-set variableNames[3]=TEST1
+@REM set /a countNames=13
+@REM set variableNames[1]=JT_HOSTNAME
+@REM set variableNames[2]=JT_ORA_HOSTNAME
+@REM set variableNames[3]=TEST1
+
+set /a countNames=13
+Set variableNames[1]=JT_HOSTNAME
+Set variableNames[2]=JT_ORA_HOSTNAME
+Set variableNames[3]=PATH_FSX8000
+Set variableNames[4]=ZDT_PORT
+Set variableNames[5]=ZD_TOKUSHO_HOSTNAME
+Set variableNames[6]=ZD_TOKUSHO_DIR
+Set variableNames[7]=MAIN_HOSTNAME
+Set variableNames[8]=HC_HOSTNAME
+Set variableNames[9]=HC_TYPE
+Set variableNames[10]=HCS_HOSTNAME
+Set variableNames[11]=APP_ROOT
+Set variableNames[12]=FTP_SERVER
+Set variableNames[13]=HYPER_ACCESS
+
 set confValues[1]=unset
 :main
     @rem call :testLoop
@@ -31,18 +47,23 @@ exit /b 0
         @REM Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
             call :getValues !variableNames[%%i]!
-            echo returnVal2: !gVal1!
+            @REM echo returnVal2: !gVal1!
             set confValues[%%i]=!gVal1!
             echo confValues: !confValues[%%i]!
+
+            @REM Replace in the file
+            @REM set searchVal={!variableNames[%%i]!}
+            @REM set newVal=!confValues[%%i]!
+            @REM call :replaceJSFile !searchVal!,!newVal!
         )
         @REM for /l %%i in (1,1,%countNames%) do call echo %%i- !confValues[%%i]!
         @REM replace in the file
-        for /l %%i in (1,1,%countNames%) do (
-            set searchVal={!variableNames[%%i]!}
-            set newVal=!confValues[%%i]!
-            echo. replace: !searchVal!,!newVal!
-            call :replaceJSFile !searchVal!,!newVal!
-        )
+        @REM for /l %%i in (1,1,%countNames%) do (
+        @REM     set searchVal={!variableNames[%%i]!}
+        @REM     set newVal=!confValues[%%i]!
+        @REM     @REM echo. replace: !searchVal!,!newVal!
+        @REM     call :replaceJSFile !searchVal!,!newVal!
+        @REM )
     endlocal
 exit /b 0
 
@@ -107,29 +128,28 @@ exit /b 0
 
 :getValues
     setlocal EnableDelayedExpansion
-        echo.
-        echo ::called getValues
+        @REM echo.
+        @REM echo ::called getValues
         @REM set searchVal=JT_HOSTNAME
         set searchVal=%1
         @REM echo !searchVal!
-        set file=C:\tmp\languageworking\bat\UnitTest.txt
+        set file=C:\tmp\languageworking\bat\unittest\init.inc
         for /f "Tokens=1,2 Delims=," %%a in (
             'type "%file%"^|find /i "%searchVal%"'
         ) Do (
             set value=%%b
-            echo !value!
+            @REM echo !value!
             @REM remove redundants
             set value=!value:");=!
-            set value=!value: "=!
+            set value=!value:"=!
             set value="!value!"
-            echo getValues !value!
+            @REM echo getValues !value!
             goto :returnVal
             exit /b 0
         )
         :returnVal
             endlocal & ( 
-                set "gVal1=%value%")
-            echo gVal1=%gVal1%
+                set gVal1=%value%)
 goto :eof
 
 :testLoop
