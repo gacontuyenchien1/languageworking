@@ -49,7 +49,7 @@ exit /b 0
             call :getValues !variableNames[%%i]!
             @REM echo returnVal2: !gVal1!
             set confValues[%%i]=!gVal1!
-            echo confValues: !confValues[%%i]!
+            echo confValues:%%i - !confValues[%%i]!
 
             @REM Replace in the file
             @REM set searchVal={!variableNames[%%i]!}
