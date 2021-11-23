@@ -30,11 +30,13 @@ set confValues[1]=unset
     @REM call :getValues JT_ORA_HOSTNAME
     @REM echo returnVal2: %gVal1%
 
-    set gVal1=unset
-    call :getAllValues
+    @REM call :testReplaceSpecialChar
 
     @REM call :replaceJSFile {JT_HOSTNAME},trongdz
     @REM for /l %%i in (1,1,%countNames%) do call echo %%i- %%confValues[%%i]%%
+
+    set gVal1=unset
+    call :getAllValues
 pause
 exit /b 0
 
@@ -140,8 +142,10 @@ exit /b 0
             set value=%%b
             @REM echo !value!
             @REM remove redundants
-            set value=!value:");=!
-            set value=!value:"=!
+            set "value=!value:)=!"
+            set "value=!value:;=!"
+            set "value=!value: "="!"
+            set "value=!value:"=!"
             set value="!value!"
             @REM echo getValues !value!
             goto :returnVal
@@ -181,4 +185,13 @@ exit /b 0
         >>"%textFile%" echo !line:%search%=%replace%!
         endlocal
     )
+exit /b 0
+
+:testReplaceSpecialChar
+    setlocal EnableDelayedExpansion
+        set str=abcd);
+        echo strbefore: !str!
+        set str=!str:)=!
+        echo strafter: !str!
+    endlocal
 exit /b 0
