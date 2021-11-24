@@ -53,9 +53,9 @@ set phpPath=c:\inetpub\wwwroot\PHP\
 :main
     call :copyFiles
 
-    :: GetAndReplace value to make init.js from init.inc
+    :: GetAndReplace values to make init.js from init.inc
     set gVal1=unset
-    call :getAllValues
+    call :getAndReplace
 exit /b 0
 
 :: Copy PHP setting files
@@ -81,7 +81,8 @@ exit /b 0
     copy %phpPath%conf\ini.xml %nodejsPath%conf\ini.xml
 exit /b 0
 
-:getAllValues
+:: GetAndReplace values to make init.js from init.inc
+:getAndReplace
     setlocal EnableDelayedExpansion
         :: Hard set for {APP_ROOT}
         set nodejsPathDoubleSlash=!nodejsPath:\=\\!
@@ -132,14 +133,15 @@ exit /b 0
                 set gVal1=%value%)
 exit /b 0
 
+:: Replace variable(%~1) with its value(%~2)
 :replaceJSFile
     setlocal enableextensions disabledelayedexpansion
     set search=%~1
-    set replace=%~2
+    set newValue=%~2
     for /f "delims=" %%i in ('type "%targetFilePath%" ^& break ^> "%targetFilePath%" ') do (
         set "line=%%i"
         setlocal enabledelayedexpansion
-        >>"%targetFilePath%" echo !line:%search%=%replace%!
+        >>"%targetFilePath%" echo !line:%search%=%newValue%!
         endlocal
     )
 exit /b 0
