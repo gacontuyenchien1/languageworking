@@ -98,15 +98,6 @@ exit /b 0
             set newVal=!confValues[%%i]!
             call :replaceJSFile !searchVal!,!newVal!
         )
-
-        @REM for /l %%i in (1,1,%countNames%) do call echo %%i- !confValues[%%i]!
-        @REM replace in the file
-        @REM for /l %%i in (1,1,%countNames%) do (
-        @REM     set searchVal={!variableNames[%%i]!}
-        @REM     set newVal=!confValues[%%i]!
-        @REM     @REM echo. replace: !searchVal!,!newVal!
-        @REM     call :replaceJSFile !searchVal!,!newVal!
-        @REM )
     endlocal
 exit /b 0
 
@@ -120,17 +111,12 @@ exit /b 0
 @REM #searchEachLine Get Values from init.inc to confVals array
 :getValueFromFile
     setlocal EnableDelayedExpansion
-        @REM echo.
-        @REM echo ::called getValueFromFile
-        @REM set searchVal=JT_HOSTNAME
         set searchVal=%1
         echo searchVal !searchVal!
-        @REM set file=C:\tmp\languageworking\bat\unittest\init.inc
         for /f "Tokens=1,2 Delims=," %%a in (
             'type "%incFilePath%"^|find /i "%searchVal%"'
         ) Do (
             set value=%%b
-            @REM echo !value!
             @REM remove redundants
             call :trim value !value!
             set "value=!value:)=!"
@@ -138,7 +124,6 @@ exit /b 0
             set "value=!value: "="!"
             set "value=!value:"=!"
             set value="!value!"
-            @REM echo getValueFromFile !value!
             goto :returnVal
             exit /b 0
         )
@@ -151,9 +136,6 @@ exit /b 0
     setlocal enableextensions disabledelayedexpansion
     set search=%~1
     set replace=%~2
-    @REM set search={JT_HOSTNAME}
-    @REM set replace=trongdz
-    @REM set "targetFilePath=C:\tmp\languageworking\bat\UnitTest1.txt"
     for /f "delims=" %%i in ('type "%targetFilePath%" ^& break ^> "%targetFilePath%" ') do (
         set "line=%%i"
         setlocal enabledelayedexpansion
