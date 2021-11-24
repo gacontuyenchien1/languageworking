@@ -1,25 +1,66 @@
+:: *******Begin SettingcopyPHP2NODE************
+::   copy/convert PHP setting files
+::   to Nodejs folders
+:: *******End SettingcopyPHP2NODE**************
+
 @echo off
-@REM set /a countNames=13
+
+:: Get values from init.inc
+:: Replace values to init.js
+set /a countNames=13
 @REM set variableNames[1]=JT_HOSTNAME
 @REM set variableNames[2]=JT_ORA_HOSTNAME
-@REM set variableNames[3]=TEST1
+@REM set variableNames[3]=PATH_FSX8000
+@REM set variableNames[4]=ZDT_PORT
+@REM set variableNames[5]=ZD_TOKUSHO_HOSTNAME
+@REM set variableNames[6]=ZD_TOKUSHO_DIR
+@REM set variableNames[7]=MAIN_HOSTNAME
+@REM set variableNames[8]=HC_HOSTNAME
+@REM set variableNames[9]=HC_TYPE
+@REM set variableNames[10]=HCS_HOSTNAME
+@REM set variableNames[11]=APP_ROOT
+@REM set variableNames[12]=FTP_SERVER
+@REM set variableNames[13]=HYPER_ACCESS
 
-set /a countNames=13
-Set variableNames[1]=JT_HOSTNAME
-Set variableNames[2]=JT_ORA_HOSTNAME
-Set variableNames[3]=PATH_FSX8000
-Set variableNames[4]=ZDT_PORT
-Set variableNames[5]=ZD_TOKUSHO_HOSTNAME
-Set variableNames[6]=ZD_TOKUSHO_DIR
-Set variableNames[7]=MAIN_HOSTNAME
-Set variableNames[8]=HC_HOSTNAME
-Set variableNames[9]=HC_TYPE
-Set variableNames[10]=HCS_HOSTNAME
-Set variableNames[11]=APP_ROOT
-Set variableNames[12]=FTP_SERVER
-Set variableNames[13]=HYPER_ACCESS
+@REM Names for getting values from inc file
+set variableNames[1]=JT_HOSTNAME
+set variableNames[2]=HC_HOSTNAME
+set variableNames[3]=HC_HOSTNAME
+set variableNames[4]=ZDT_PORT
+set variableNames[5]=ZD_TOKUSHO_HOSTNAME
+set variableNames[6]=ZD_TOKUSHO_DIR
+set variableNames[7]=MAIN_HOSTNAME
+set variableNames[8]=HC_HOSTNAME
+set variableNames[9]=HC_TYPE
+set variableNames[10]=HCS_HOSTNAME
+set variableNames[11]=APP_ROOT
+set variableNames[12]=FTP_SERVER
+set variableNames[13]=HYPER_ACCESS
+
+@REM Names for replacement
+set replaceNames[1]=JT_HOSTNAME
+set replaceNames[2]=HC_HOSTNAME
+set replaceNames[3]=HC_HOSTNAME
+set replaceNames[4]=ZDT_PORT
+set replaceNames[5]=ZD_TOKUSHO_HOSTNAME
+set replaceNames[6]=ZD_TOKUSHO_DIR
+set replaceNames[7]=MAIN_HOSTNAME
+set replaceNames[8]=HC_HOSTNAME
+set replaceNames[9]=HC_TYPE
+set replaceNames[10]=HCS_HOSTNAME
+set replaceNames[11]=APP_ROOT
+set replaceNames[12]=HCFTP_SERVER
+set replaceNames[13]=USE_HYPER
 
 set confValues[1]=unset
+
+set curPath=%~dp0
+@REM set incFilePath=c:\inetpub\wwwroot\PHP\conf\init.inc
+set incFilePath=%curPath%wwwroot\conf\test_init.inc
+set templateFilePath=%curPath%wwwroot\conf\test_init.origin.js
+set targetFilePath=%curPath%wwwroot\conf\test_init.js
+set nodejsPath=%curPath%wwwroot\
+set phpPath=c:\inetpub\wwwroot\PHP\
 :main
     @rem call :testLoop
     @REM call :getValuesFromInc
@@ -40,23 +81,41 @@ set confValues[1]=unset
 pause
 exit /b 0
 
+:: Copy PHP setting files
+:: to Nodejs folders
+:copyFiles
+    if not exist c:\tmp\NodeJS\bin\  mkdir c:\tmp\NodeJS\bin\
+    copy c:\inetpub\wwwroot\PHP\bin\env.dat c:\tmp\NodeJS\bin\env.dat
+
+    if not exist c:\tmp\NodeJS\img_staff  mkdir c:\tmp\NodeJS\img_staff
+    robocopy /e c:\inetpub\wwwroot\PHP\img_staff c:\tmp\NodeJS\img_staff
+
+    if not exist c:\tmp\NodeJS\img_map\  mkdir c:\tmp\NodeJS\img_map\
+    copy c:\inetpub\wwwroot\PHP\img_map\holeMap.jpg c:\tmp\NodeJS\img_map\holeMap.jpg
+
+    if not exist c:\tmp\NodeJS\img_maptool\  mkdir c:\tmp\NodeJS\img_maptool\
+    copy c:\inetpub\wwwroot\PHP\img_maptool\baseMap.jpg c:\tmp\NodeJS\img_maptool\baseMap.jpg
+
+    if not exist c:\tmp\NodeJS\conf\  mkdir c:\tmp\NodeJS\conf\
+    copy c:\inetpub\wwwroot\PHP\conf\init.inc c:\tmp\NodeJS\conf\init.js
+
+    if not exist c:\tmp\NodeJS\conf\  mkdir c:\tmp\NodeJS\conf\
+    copy c:\inetpub\wwwroot\PHP\conf\ini.xml c:\tmp\NodeJS\conf\ini.xml
+exit /b 0
+
 :getAllValues
-    @REM for /l %%i in (1,1,%countNames%) do (
-    @REM     call :getValues %%variableNames[%%i]%%
-    @REM     echo returnVal2: %gVal1%
-    @REM )
     setlocal EnableDelayedExpansion
         @REM Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
-            call :getValues !variableNames[%%i]!
+            call :getValues ""!variableNames[%%i]!""
             @REM echo returnVal2: !gVal1!
             set confValues[%%i]=!gVal1!
             echo confValues:%%i - !confValues[%%i]!
 
             @REM Replace in the file
-            @REM set searchVal={!variableNames[%%i]!}
-            @REM set newVal=!confValues[%%i]!
-            @REM call :replaceJSFile !searchVal!,!newVal!
+            set searchVal={!replaceNames[%%i]!}
+            set newVal=!confValues[%%i]!
+            call :replaceJSFile !searchVal!,!newVal!
         )
         @REM for /l %%i in (1,1,%countNames%) do call echo %%i- !confValues[%%i]!
         @REM replace in the file
@@ -68,6 +127,13 @@ exit /b 0
         @REM )
     endlocal
 exit /b 0
+
+@REM Remove trailing and leading whitespace
+:trim
+    SetLocal EnableDelayedExpansion
+    set Params=%*
+    for /f "tokens=1*" %%a in ("!Params!") do EndLocal & set %1=%%b
+exit /b
 
 :testFunc
     SETLOCAL
@@ -134,14 +200,15 @@ exit /b 0
         @REM echo ::called getValues
         @REM set searchVal=JT_HOSTNAME
         set searchVal=%1
-        @REM echo !searchVal!
-        set file=C:\tmp\languageworking\bat\unittest\init.inc
+        echo searchVal !searchVal!
+        @REM set file=C:\tmp\languageworking\bat\unittest\init.inc
         for /f "Tokens=1,2 Delims=," %%a in (
-            'type "%file%"^|find /i "%searchVal%"'
+            'type "%incFilePath%"^|find /i "%searchVal%"'
         ) Do (
             set value=%%b
             @REM echo !value!
             @REM remove redundants
+            call :trim value !value!
             set "value=!value:)=!"
             set "value=!value:;=!"
             set "value=!value: "="!"
@@ -178,11 +245,11 @@ exit /b 0
     set replace=%~2
     @REM set search={JT_HOSTNAME}
     @REM set replace=trongdz
-    set "textFile=C:\tmp\languageworking\bat\UnitTest1.txt"
-    for /f "delims=" %%i in ('type "%textFile%" ^& break ^> "%textFile%" ') do (
+    @REM set "targetFilePath=C:\tmp\languageworking\bat\UnitTest1.txt"
+    for /f "delims=" %%i in ('type "%targetFilePath%" ^& break ^> "%targetFilePath%" ') do (
         set "line=%%i"
         setlocal enabledelayedexpansion
-        >>"%textFile%" echo !line:%search%=%replace%!
+        >>"%targetFilePath%" echo !line:%search%=%replace%!
         endlocal
     )
 exit /b 0
