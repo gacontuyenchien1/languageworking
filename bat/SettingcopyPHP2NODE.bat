@@ -8,7 +8,7 @@
 :: Replace values to init.js
 set /a countNames=13
 
-@REM Names for getting values from inc file
+:: Names for getting values from inc file
 set variableNames[1]=JT_HOSTNAME
 set variableNames[2]=HC_HOSTNAME
 set variableNames[3]=HC_HOSTNAME
@@ -23,7 +23,7 @@ set variableNames[11]=APP_ROOT
 set variableNames[12]=FTP_SERVER
 set variableNames[13]=HYPER_ACCESS
 
-@REM Names for replacement
+:: Names for replacement
 set replaceNames[1]=JT_HOSTNAME
 set replaceNames[2]=HC_HOSTNAME
 set replaceNames[3]=HC_HOSTNAME
@@ -41,9 +41,9 @@ set replaceNames[13]=USE_HYPER
 set confValues[1]=unset
 
 set curPath=%~dp0
-@REM set incFilePath=%curPath%wwwroot\conf\test_init.inc
-@REM set templateFilePath=%curPath%wwwroot\conf\test_init.origin.js
-@REM set targetFilePath=%curPath%wwwroot\conf\test_init.js
+:: set incFilePath=%curPath%wwwroot\conf\test_init.inc
+:: set templateFilePath=%curPath%wwwroot\conf\test_init.origin.js
+:: set targetFilePath=%curPath%wwwroot\conf\test_init.js
 set incFilePath=c:\inetpub\wwwroot\PHP\conf\init.inc
 set templateFilePath=%curPath%wwwroot\conf\init.origin.js
 set targetFilePath=%curPath%wwwroot\conf\init.js
@@ -53,15 +53,15 @@ set phpPath=c:\inetpub\wwwroot\PHP\
 :main
     call :copyFiles
 
+    :: GetAndReplace value to make init.js from init.inc
     set gVal1=unset
     call :getAllValues
-pause
 exit /b 0
 
 :: Copy PHP setting files
 :: to Nodejs folders
 :copyFiles
-    @REM (#fortesting)copy %phpPath%bin\env.dat %curPath%env.dat
+    :: (#fortesting)copy %phpPath%bin\env.dat %curPath%env.dat
     if not exist %nodejsPath%bin\  mkdir %nodejsPath%bin\
     copy %phpPath%bin\env.dat %nodejsPath%bin\env.dat
 
@@ -83,17 +83,17 @@ exit /b 0
 
 :getAllValues
     setlocal EnableDelayedExpansion
-        @REM Get all values to confValues array
+        :: Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
             set nodejsPathDoubleSlash=!nodejsPath:\=\\!
             if %%i==11 call :replaceJSFile {!replaceNames[11]!},!nodejsPathDoubleSlash!
 
             call :getValueFromFile ""!variableNames[%%i]!""
-            @REM echo returnVal2: !gVal1!
+            :: echo returnVal2: !gVal1!
             set confValues[%%i]=!gVal1!
             echo confValues:%%i - !confValues[%%i]!
 
-            @REM Replace in the file
+            :: Replace in the file
             set searchVal={!replaceNames[%%i]!}
             set newVal=!confValues[%%i]!
             call :replaceJSFile !searchVal!,!newVal!
@@ -101,14 +101,14 @@ exit /b 0
     endlocal
 exit /b 0
 
-@REM Remove trailing and leading whitespace
+:: Remove trailing and leading whitespace
 :trim
     SetLocal EnableDelayedExpansion
     set Params=%*
     for /f "tokens=1*" %%a in ("!Params!") do EndLocal & set %1=%%b
 exit /b 0
 
-@REM #searchEachLine Get Values from init.inc to confVals array
+:: #searchEachLine Get Values from init.inc to confVals array
 :getValueFromFile
     setlocal EnableDelayedExpansion
         set searchVal=%1
@@ -117,7 +117,7 @@ exit /b 0
             'type "%incFilePath%"^|find /i "%searchVal%"'
         ) Do (
             set value=%%b
-            @REM remove redundants
+            :: remove redundants
             call :trim value !value!
             set "value=!value:)=!"
             set "value=!value:;=!"
