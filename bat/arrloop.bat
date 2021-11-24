@@ -76,31 +76,33 @@ set phpPath=c:\inetpub\wwwroot\PHP\
     @REM call :replaceJSFile {JT_HOSTNAME},trongdz
     @REM for /l %%i in (1,1,%countNames%) do call echo %%i- %%confValues[%%i]%%
 
-    set gVal1=unset
-    call :getAllValues
+    call :copyFiles
+    @REM set gVal1=unset
+    @REM call :getAllValues
 pause
 exit /b 0
 
 :: Copy PHP setting files
 :: to Nodejs folders
 :copyFiles
-    if not exist c:\tmp\NodeJS\bin\  mkdir c:\tmp\NodeJS\bin\
-    copy c:\inetpub\wwwroot\PHP\bin\env.dat c:\tmp\NodeJS\bin\env.dat
+    @REM (#fortesting)copy %phpPath%bin\env.dat %curPath%env.dat
+    if not exist %nodejsPath%bin\  mkdir %nodejsPath%bin\
+    copy %phpPath%bin\env.dat %nodejsPath%bin\env.dat
 
-    if not exist c:\tmp\NodeJS\img_staff  mkdir c:\tmp\NodeJS\img_staff
-    robocopy /e c:\inetpub\wwwroot\PHP\img_staff c:\tmp\NodeJS\img_staff
+    if not exist %nodejsPath%img_staff  mkdir %nodejsPath%img_staff
+    robocopy /e %phpPath%img_staff %nodejsPath%img_staff
 
-    if not exist c:\tmp\NodeJS\img_map\  mkdir c:\tmp\NodeJS\img_map\
-    copy c:\inetpub\wwwroot\PHP\img_map\holeMap.jpg c:\tmp\NodeJS\img_map\holeMap.jpg
+    if not exist %nodejsPath%img_map\  mkdir %nodejsPath%img_map\
+    copy %phpPath%img_map\holeMap.jpg %nodejsPath%img_map\holeMap.jpg
 
-    if not exist c:\tmp\NodeJS\img_maptool\  mkdir c:\tmp\NodeJS\img_maptool\
-    copy c:\inetpub\wwwroot\PHP\img_maptool\baseMap.jpg c:\tmp\NodeJS\img_maptool\baseMap.jpg
+    if not exist %nodejsPath%img_maptool\  mkdir %nodejsPath%img_maptool\
+    copy %phpPath%img_maptool\baseMap.jpg %nodejsPath%img_maptool\baseMap.jpg
 
-    if not exist c:\tmp\NodeJS\conf\  mkdir c:\tmp\NodeJS\conf\
-    copy c:\inetpub\wwwroot\PHP\conf\init.inc c:\tmp\NodeJS\conf\init.js
+    if not exist %nodejsPath%conf\  mkdir %nodejsPath%conf\
+    copy %phpPath%conf\init.inc %nodejsPath%conf\init.js
 
-    if not exist c:\tmp\NodeJS\conf\  mkdir c:\tmp\NodeJS\conf\
-    copy c:\inetpub\wwwroot\PHP\conf\ini.xml c:\tmp\NodeJS\conf\ini.xml
+    if not exist %nodejsPath%conf\  mkdir %nodejsPath%conf\
+    copy %phpPath%conf\ini.xml %nodejsPath%conf\ini.xml
 exit /b 0
 
 :getAllValues
