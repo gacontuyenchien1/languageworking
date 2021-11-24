@@ -83,11 +83,11 @@ exit /b 0
 
 :getAllValues
     setlocal EnableDelayedExpansion
+        :: Hard set for {APP_ROOT}
+        set nodejsPathDoubleSlash=!nodejsPath:\=\\!
+        call :replaceJSFile {!replaceNames[11]!},!nodejsPathDoubleSlash!
         :: Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
-            set nodejsPathDoubleSlash=!nodejsPath:\=\\!
-            if %%i==11 call :replaceJSFile {!replaceNames[11]!},!nodejsPathDoubleSlash!
-
             call :getValueFromFile ""!variableNames[%%i]!""
             :: echo returnVal2: !gVal1!
             set confValues[%%i]=!gVal1!
