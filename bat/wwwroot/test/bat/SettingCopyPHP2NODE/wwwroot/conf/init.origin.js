@@ -8,6 +8,6 @@ module.exports.MAIN_HOSTNAME = "{MAIN_HOSTNAME}";
 module.exports.HC_HOSTNAME = "{HC_HOSTNAME}";
 module.exports.HC_TYPE = {HC_TYPE};
 module.exports.HCS_HOSTNAME = "{HCS_HOSTNAME}";
-module.exports.APP_ROOT = "C:/inetpub/wwwroot";
+module.exports.APP_ROOT = "{APP_ROOT}";
 module.exports.FTP_SERVER = "{HCFTP_SERVER}";
 module.exports.HYPER_ACCESS = {USE_HYPER};

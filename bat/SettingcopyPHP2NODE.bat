@@ -41,19 +41,34 @@ set replaceNames[13]=USE_HYPER
 set confValues[1]=unset
 
 set curPath=%~dp0
-:: set incFilePath=%curPath%wwwroot\conf\test_init.inc
-:: set templateFilePath=%curPath%wwwroot\conf\test_init.origin.js
-:: set targetFilePath=%curPath%wwwroot\conf\test_init.js
-set incFilePath=c:\inetpub\wwwroot\PHP\conf\init.inc
-set templateFilePath=%curPath%wwwroot\conf\init.origin.js
-set targetFilePath=%curPath%wwwroot\conf\init.js
+set testNodejsPath=wwwroot\test\bat\SettingCopyPHP2NODE\
+setlocal EnableDelayedExpansion
+if "%1"=="test" (
+    echo SettingcopyPHP2NODE Test Mode11111111
+    endlocal & ( 
+        set incFilePath=%curPath%%testNodejsPath%wwwroot\conf\init.inc
+        set templateFilePath=%curPath%%testNodejsPath%wwwroot\conf\init.origin.js
+        set targetFilePath=%curPath%%testNodejsPath%wwwroot\conf\init.js
+        set nodejsPath=%curPath%%testNodejsPath%wwwroot\)
+) else (
+    echo SettingcopyPHP2NODE production Mode
+    endlocal & ( 
+        set incFilePath=c:\inetpub\wwwroot\PHP\conf\init.inc
+        set templateFilePath=%curPath%wwwroot\conf\init.origin.js
+        set targetFilePath=%curPath%wwwroot\conf\init.js
+        set nodejsPath=%curPath%wwwroot\)
+)
 
-set nodejsPath=%curPath%wwwroot\
+echo. %incFilePath%
+echo. %templateFilePath%
+echo. %targetFilePath%
+echo. %nodejsPath%
 set phpPath=c:\inetpub\wwwroot\PHP\
+
 :main
     call :copyFiles
 
-    :: GetAndReplace values to make init.js from init.inc
+    @REM :: GetAndReplace values to make init.js from init.inc
     set gVal1=unset
     call :getAndReplace
 exit /b 0
@@ -62,21 +77,22 @@ exit /b 0
 :: to Nodejs folders
 :copyFiles
     :: (#fortesting)copy %phpPath%bin\env.dat %curPath%env.dat
+    :: 1
     if not exist %nodejsPath%bin\  mkdir %nodejsPath%bin\
     copy %phpPath%bin\env.dat %nodejsPath%bin\env.dat
-
+    :: 2
     if not exist %nodejsPath%img_staff  mkdir %nodejsPath%img_staff
     robocopy /e %phpPath%img_staff %nodejsPath%img_staff
-
+    :: 3
     if not exist %nodejsPath%img_map\  mkdir %nodejsPath%img_map\
     copy %phpPath%img_map\holeMap.jpg %nodejsPath%img_map\holeMap.jpg
-
+    :: 4
     if not exist %nodejsPath%img_maptool\  mkdir %nodejsPath%img_maptool\
     copy %phpPath%img_maptool\baseMap.jpg %nodejsPath%img_maptool\baseMap.jpg
-
+    :: 5
     if not exist %nodejsPath%conf\  mkdir %nodejsPath%conf\
     copy %nodejsPath%conf\init.origin.js %nodejsPath%conf\init.js
-
+    :: 6
     if not exist %nodejsPath%conf\  mkdir %nodejsPath%conf\
     copy %phpPath%conf\ini.xml %nodejsPath%conf\ini.xml
 exit /b 0

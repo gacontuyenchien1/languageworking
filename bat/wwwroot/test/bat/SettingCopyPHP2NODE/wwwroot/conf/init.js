@@ -1,0 +1,13 @@
+module.exports.JT_HOSTNAME = "127.0.0.1";
+module.exports.JT_ORA_HOSTNAME = "127.0.0.1";
+module.exports.PATH_FSX8000 = "//127.0.0.1/FSX8800/";
+module.exports.ZDT_PORT = 3000;
+module.exports.ZD_TOKUSHO_HOSTNAME = "127.0.0.1";
+module.exports.ZD_TOKUSHO_DIR = "Dac800ZI_Public";
+module.exports.MAIN_HOSTNAME = "127.0.0.1";
+module.exports.HC_HOSTNAME = "127.0.0.1";
+module.exports.HC_TYPE = HC_TYPE_IMS_M7;
+module.exports.HCS_HOSTNAME = "127.0.0.1";
+module.exports.APP_ROOT = "D:\\TrongTran\\CompanyProjects\\FXPROJ\\Docs\\MyDocs\\languageworking\\bat\\wwwroot\\test\\bat\\SettingCopyPHP2NODE\\wwwroot\\";
+module.exports.FTP_SERVER = "127.0.0.1";
+module.exports.HYPER_ACCESS = true;
