@@ -1,0 +1,13 @@
+    define("JT_HOSTNAME", "127.0.0.1");
+    define("JT_ORA_HOSTNAME", "127.0.0.1");
+    define("PATH_FSX8000","//127.0.0.1/FSX8800/");
+    define("ZDT_PORT", 3000);
+    define("ZD_TOKUSHO_HOSTNAME", "127.0.0.1");
+    define("ZD_TOKUSHO_DIR", "Dac800ZI_Public");
+    define("MAIN_HOSTNAME", "127.0.0.1");
+    define("HC_HOSTNAME", "127.0.0.1");
+    define("HC_TYPE", HC_TYPE_IMS_M7);
+    define("HCS_HOSTNAME", "127.0.0.1");
+    define("APP_ROOT", "C:/inetpub/wwwroot");
+    define("FTP_SERVER", "127.0.0.1");
+    define("HYPER_ACCESS", true);
