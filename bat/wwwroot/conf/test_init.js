@@ -8,6 +8,6 @@ module.exports.MAIN_HOSTNAME = "127.0.0.1";
 module.exports.HC_HOSTNAME = "127.0.0.1";
 module.exports.HC_TYPE = HC_TYPE_IMS_M7;
 module.exports.HCS_HOSTNAME = "127.0.0.1";
-module.exports.APP_ROOT = "C:/inetpub/wwwroot";
+module.exports.APP_ROOT = "D:\\TrongTran\\CompanyProjects\\FXPROJ\\Docs\\MyDocs\\languageworking\\bat\\wwwroot\\";
 module.exports.FTP_SERVER = "127.0.0.1";
 module.exports.HYPER_ACCESS = true;

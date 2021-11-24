@@ -1,8 +1,0 @@
-define("JT_HOSTNAME", "127.0.0.1");
-define("JT_HOSTNAME", "127.0.0.1");
-module.exports.JT_HOSTNAME = "127.0.0.1";
-define("JT_HOSTNAME", "127.0.0.1");
-define("test", "test");
-
-define("JT_ORA_HOSTNAME", "127.0.0.2");
-define("test", "test");
