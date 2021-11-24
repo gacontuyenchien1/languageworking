@@ -210,7 +210,7 @@ module.exports.STAFF_DISPITEM_INTRODUCT = 1;
 module.exports.STAFF_DISPITEM_RANKING = 2;
 module.exports.STAFF_DISPITEM_RANKING_TOP3 = 3;
 
-module.exports.APP_ROOT = "C:/inetpub/wwwroot";
+module.exports.APP_ROOT = "{APP_ROOT}";
 module.exports.APP_CONF_DIR = module.exports.APP_ROOT.concat("/conf");
 module.exports.APP_BIN_DIR = module.exports.APP_ROOT.concat("/bin");
 module.exports.INIXMLFILE = module.exports.APP_CONF_DIR.concat("/ini.xml");
