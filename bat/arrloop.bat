@@ -2,25 +2,11 @@
 ::   copy/convert PHP setting files
 ::   to Nodejs folders
 :: *******End SettingcopyPHP2NODE**************
-
 @echo off
 
 :: Get values from init.inc
 :: Replace values to init.js
 set /a countNames=13
-@REM set variableNames[1]=JT_HOSTNAME
-@REM set variableNames[2]=JT_ORA_HOSTNAME
-@REM set variableNames[3]=PATH_FSX8000
-@REM set variableNames[4]=ZDT_PORT
-@REM set variableNames[5]=ZD_TOKUSHO_HOSTNAME
-@REM set variableNames[6]=ZD_TOKUSHO_DIR
-@REM set variableNames[7]=MAIN_HOSTNAME
-@REM set variableNames[8]=HC_HOSTNAME
-@REM set variableNames[9]=HC_TYPE
-@REM set variableNames[10]=HCS_HOSTNAME
-@REM set variableNames[11]=APP_ROOT
-@REM set variableNames[12]=FTP_SERVER
-@REM set variableNames[13]=HYPER_ACCESS
 
 @REM Names for getting values from inc file
 set variableNames[1]=JT_HOSTNAME
@@ -55,30 +41,20 @@ set replaceNames[13]=USE_HYPER
 set confValues[1]=unset
 
 set curPath=%~dp0
-@REM set incFilePath=c:\inetpub\wwwroot\PHP\conf\init.inc
-set incFilePath=%curPath%wwwroot\conf\test_init.inc
-set templateFilePath=%curPath%wwwroot\conf\test_init.origin.js
-set targetFilePath=%curPath%wwwroot\conf\test_init.js
+@REM set incFilePath=%curPath%wwwroot\conf\test_init.inc
+@REM set templateFilePath=%curPath%wwwroot\conf\test_init.origin.js
+@REM set targetFilePath=%curPath%wwwroot\conf\test_init.js
+set incFilePath=c:\inetpub\wwwroot\PHP\conf\init.inc
+set templateFilePath=%curPath%wwwroot\conf\init.origin.js
+set targetFilePath=%curPath%wwwroot\conf\init.js
+
 set nodejsPath=%curPath%wwwroot\
 set phpPath=c:\inetpub\wwwroot\PHP\
 :main
-    @rem call :testLoop
-    @REM call :getValuesFromInc
-    @REM call :testIf
-    @REM call :testFunc
-
-    @REM set gVal1=unset
-    @REM call :getValues JT_ORA_HOSTNAME
-    @REM echo returnVal2: %gVal1%
-
-    @REM call :testReplaceSpecialChar
-
-    @REM call :replaceJSFile {JT_HOSTNAME},trongdz
-    @REM for /l %%i in (1,1,%countNames%) do call echo %%i- %%confValues[%%i]%%
-
     call :copyFiles
-    @REM set gVal1=unset
-    @REM call :getAllValues
+
+    set gVal1=unset
+    call :getAllValues
 pause
 exit /b 0
 
@@ -99,7 +75,7 @@ exit /b 0
     copy %phpPath%img_maptool\baseMap.jpg %nodejsPath%img_maptool\baseMap.jpg
 
     if not exist %nodejsPath%conf\  mkdir %nodejsPath%conf\
-    copy %phpPath%conf\init.inc %nodejsPath%conf\init.js
+    copy %nodejsPath%conf\init.origin.js %nodejsPath%conf\init.js
 
     if not exist %nodejsPath%conf\  mkdir %nodejsPath%conf\
     copy %phpPath%conf\ini.xml %nodejsPath%conf\ini.xml
@@ -109,7 +85,10 @@ exit /b 0
     setlocal EnableDelayedExpansion
         @REM Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
-            call :getValues ""!variableNames[%%i]!""
+            set nodejsPathDoubleSlash=!nodejsPath:\=\\!
+            if %%i==11 call :replaceJSFile {!replaceNames[11]!},!nodejsPathDoubleSlash!
+
+            call :getValueFromFile ""!variableNames[%%i]!""
             @REM echo returnVal2: !gVal1!
             set confValues[%%i]=!gVal1!
             echo confValues:%%i - !confValues[%%i]!
@@ -119,6 +98,7 @@ exit /b 0
             set newVal=!confValues[%%i]!
             call :replaceJSFile !searchVal!,!newVal!
         )
+
         @REM for /l %%i in (1,1,%countNames%) do call echo %%i- !confValues[%%i]!
         @REM replace in the file
         @REM for /l %%i in (1,1,%countNames%) do (
@@ -135,71 +115,13 @@ exit /b 0
     SetLocal EnableDelayedExpansion
     set Params=%*
     for /f "tokens=1*" %%a in ("!Params!") do EndLocal & set %1=%%b
-exit /b
-
-:testFunc
-    SETLOCAL
-    CALL :SetValue value1,value2
-    echo %value1%
-    echo %value2%
-    endlocal
-EXIT /B %ERRORLEVEL%
-
-:SetValue
-set "%~1=5"
-set "%~2=10"
-EXIT /B 0
-
-:testIf
-    set /A index=2
-    echo index: %index%
-    echo variableNames[1]: %variableNames[1]%
-     
-    setlocal EnableDelayedExpansion
-    call echo using 4 percent icon: %%variableNames[%index%]%%
-    echo using `!a[%b%]!`: !variableNames[%index%]!
-    if "!variableNames[%index%]!"=="JT_ORA_HOSTNAME" (
-        echo Yeah, if is working!!!
-    ) else (
-        echo No, if is not working!!!
-    )
-
-    set curName=!variableNames[%index%]!
-    echo curName: %curName%
-    endlocal
 exit /b 0
 
 @REM #searchEachLine Get Values from init.inc to confVals array
-:getValuesFromInc
-    echo ::getValuesFromInc
-    set /a curGettingID=1
-    setlocal EnableDelayedExpansion
-        set file=C:\tmp\languageworking\bat\UnitTest.txt
-        for /f "tokens=1,2  Delims=," %%a in (%file%) do (
-            echo.
-            set key=%%~a
-            @REM echo !key!
-            set searchVal=!variableNames[%curGettingID%]!
-            echo searchVal !searchVal!
-            set keyChanged=!key:%searchVal%=!
-            echo keyChanged: !keyChanged!
-            if not x"!key:!searchVal!=!"==x"!key!" (
-                echo If is good
-            	set Val=%%~b
-            	set confVals[!curGettingID!]=!Val!
-            	set /A curGettingID+=1
-            )
-        )
-
-        echo Number of processed arguments: %curGettingID%
-        for /l %%i in (1,1,%curGettingID%) do echo %%i- !confVals[%%i]!
-    endlocal
-exit /b 0
-
-:getValues
+:getValueFromFile
     setlocal EnableDelayedExpansion
         @REM echo.
-        @REM echo ::called getValues
+        @REM echo ::called getValueFromFile
         @REM set searchVal=JT_HOSTNAME
         set searchVal=%1
         echo searchVal !searchVal!
@@ -216,29 +138,13 @@ exit /b 0
             set "value=!value: "="!"
             set "value=!value:"=!"
             set value="!value!"
-            @REM echo getValues !value!
+            @REM echo getValueFromFile !value!
             goto :returnVal
             exit /b 0
         )
         :returnVal
             endlocal & ( 
                 set gVal1=%value%)
-goto :eof
-
-:testLoop
-set Arr[0]=1 
-set Arr[1]=2 
-set Arr[2]=3 
-set Arr[3]=4 
-set /a x=0
-:SymLoop 
-
-if defined Arr[%x%] ( 
-   call echo %%Arr[%x%]%% 
-   set /a "x+=1"
-   goto :SymLoop 
-)
-echo "The length of the array is" %x%
 exit /b 0
 
 :replaceJSFile
@@ -254,13 +160,4 @@ exit /b 0
         >>"%targetFilePath%" echo !line:%search%=%replace%!
         endlocal
     )
-exit /b 0
-
-:testReplaceSpecialChar
-    setlocal EnableDelayedExpansion
-        set str=abcd);
-        echo strbefore: !str!
-        set str=!str:)=!
-        echo strafter: !str!
-    endlocal
 exit /b 0
