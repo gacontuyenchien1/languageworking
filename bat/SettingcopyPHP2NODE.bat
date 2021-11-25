@@ -67,10 +67,19 @@ set phpPath=c:\inetpub\wwwroot\PHP\
 
 :main
     call :copyFiles
-
     @REM :: GetAndReplace values to make init.js from init.inc
     set gVal1=unset
     call :getAndReplace
+
+    :: Using endcoding UTF-8
+    call :convertToUTF8
+exit /b 0
+
+:: Convert file init.js to UTF-8 encoding
+:convertToUTF8
+    powershell "& Get-Content %nodejsPath%conf\init.js | Set-Content -Encoding utf8 %nodejsPath%conf\initutf8.js"
+    del %nodejsPath%conf\init.js
+    rename %nodejsPath%conf\initutf8.js init.js
 exit /b 0
 
 :: Copy PHP setting files
