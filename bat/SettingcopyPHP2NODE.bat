@@ -101,7 +101,7 @@ exit /b 0
     setlocal EnableDelayedExpansion
         :: Hard set for {APP_ROOT}
         set nodejsPathDoubleSlash=!nodejsPath:\=\\!
-        call :replaceJSFile {!replaceNames[11]!},!nodejsPathDoubleSlash!
+        call :replaceUsingPS {!replaceNames[11]!},!nodejsPathDoubleSlash!
         :: Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
             call :getValueFromFile ""!variableNames[%%i]!""
@@ -112,7 +112,7 @@ exit /b 0
             :: Replace in the file
             set searchVal={!replaceNames[%%i]!}
             set newVal=!confValues[%%i]!
-            call :replaceJSFile !searchVal!,!newVal!
+            call :replaceUsingPS !searchVal!,!newVal!
         )
     endlocal
 exit /b 0
@@ -148,16 +148,9 @@ exit /b 0
                 set gVal1=%value%)
 exit /b 0
 
-:: Replace variable(%~1) with its value(%~2)
-:replaceJSFile
-    setlocal enableextensions disabledelayedexpansion
-    chcp 65001
+:: Replace variable(%~1) with its value(%~2) in %targetFilePath%
+:replaceUsingPS
     set search=%~1
     set newValue=%~2
-    for /f "delims=" %%i in ('type "%targetFilePath%" ^& break ^> "%targetFilePath%" ') do (
-        set "line=%%i"
-        setlocal enabledelayedexpansion
-        >>"%targetFilePath%" echo !line:%search%=%newValue%!
-        endlocal
-    )
+    powershell -Command "(gc %targetFilePath%) -replace '%search%', '%newValue%' | Out-File -encoding default %targetFilePath%"
 exit /b 0
