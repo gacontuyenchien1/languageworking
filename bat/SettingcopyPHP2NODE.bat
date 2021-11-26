@@ -48,29 +48,35 @@ if "%1"=="test" (
     endlocal & ( 
         set incFilePath=%curPath%%testNodejsPath%wwwroot\conf\init.inc
         set templateFilePath=%curPath%%testNodejsPath%wwwroot\conf\init.origin.js
-        set targetFilePath=%curPath%%testNodejsPath%wwwroot\conf\init.js
+        set initJSFilePath=%curPath%%testNodejsPath%wwwroot\conf\init.js
         set nodejsPath=%curPath%%testNodejsPath%wwwroot\)
 ) else (
     echo SettingcopyPHP2NODE production Mode
     endlocal & ( 
         set incFilePath=c:\inetpub\wwwroot\PHP\conf\init.inc
         set templateFilePath=%curPath%wwwroot\conf\init.origin.js
-        set targetFilePath=%curPath%wwwroot\conf\init.js
+        set initJSFilePath=%curPath%wwwroot\conf\init.js
         set nodejsPath=%curPath%wwwroot\)
 )
 
 echo. %incFilePath%
 echo. %templateFilePath%
-echo. %targetFilePath%
+echo. %initJSFilePath%
 echo. %nodejsPath%
 set phpPath=c:\inetpub\wwwroot\PHP\
-
+set iniXMLPath=%nodejsPath%conf\ini.xml
 :main
     call :copyFiles
-    @REM :: GetAndReplace values to make init.js from init.inc
+    :: GetAndReplace values to make init.js from init.inc
     set gVal1=unset
     call :getAndReplace
-    call :convertFileToUTF8NoBom
+    call :convertFileToUTF8NoBom %initJSFilePath%
+
+    :: Replace only at "PHP/img_staff" from ini.xml(Nodejs)
+    echo "from ini.xml(Nodejs) replace: PHP/img_staff -> ../img_staff"
+    call :replaceUsingPS PHP/img_staff,../img_staff,%iniXMLPath%
+    call :convertFileToUTF8NoBom %iniXMLPath%
+    :: Show windows-message after done
     if ERRORLEVEL 0 (
         call :windowOKMessage
     ) else (
@@ -107,7 +113,7 @@ exit /b 0
     setlocal EnableDelayedExpansion
         :: Hard set for {APP_ROOT}
         set nodejsPathDoubleSlash=!nodejsPath:\=\\!
-        call :replaceUsingPS {!replaceNames[11]!},!nodejsPathDoubleSlash!
+        call :replaceUsingPS {!replaceNames[11]!},!nodejsPathDoubleSlash!,!initJSFilePath!
         :: Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
             call :getValueFromFile ""!variableNames[%%i]!""
@@ -118,7 +124,7 @@ exit /b 0
             :: Replace in the file
             set searchVal={!replaceNames[%%i]!}
             set newVal=!confValues[%%i]!
-            call :replaceUsingPS !searchVal!,!newVal!
+            call :replaceUsingPS !searchVal!,!newVal!,!initJSFilePath!
         )
     endlocal
 exit /b 0
@@ -154,16 +160,18 @@ exit /b 0
                 set gVal1=%value%)
 exit /b 0
 
-:: Replace variable(%~1) with its value(%~2) in %targetFilePath%
+:: Replace variable(%~1) with its value(%~2) in file(%~3)
 :replaceUsingPS
     set search=%~1
     set newValue=%~2
-    powershell -Command "(gc %targetFilePath%) -replace '%search%', '%newValue%' | Out-File -encoding utf8 %targetFilePath%"
+    set fileReplace= %~3
+    powershell -Command "(gc %fileReplace% -encoding utf8) -replace '%search%', '%newValue%' | Out-File -encoding utf8 %fileReplace%"
 exit /b 0
 
-:: Convert the file with link(%targetFilePath%) to UTF8 No BOM
+:: Convert the file with file(%~1) to UTF8 No BOM
 :convertFileToUTF8NoBom
-    powershell -Command "$MyRawString = Get-Content -Raw %targetFilePath%";$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False; [System.IO.File]::WriteAllLines('%targetFilePath%', $MyRawString, $Utf8NoBomEncoding)
+    set filePath=%~1
+    powershell -Command "$MyRawString = Get-Content -Raw %filePath%";$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False; [System.IO.File]::WriteAllLines('%filePath%', $MyRawString, $Utf8NoBomEncoding)
 exit /b 0
 
 :windowOKMessage
