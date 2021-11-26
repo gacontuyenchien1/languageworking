@@ -70,8 +70,12 @@ set phpPath=c:\inetpub\wwwroot\PHP\
     @REM :: GetAndReplace values to make init.js from init.inc
     set gVal1=unset
     call :getAndReplace
-
     call :convertFileToUTF8NoBom
+    if ERRORLEVEL 0 (
+        call :windowOKMessage
+    ) else (
+        call :windowFAILMessage
+    )
 exit /b 0
 
 :: Copy PHP setting files
@@ -157,6 +161,15 @@ exit /b 0
     powershell -Command "(gc %targetFilePath%) -replace '%search%', '%newValue%' | Out-File -encoding utf8 %targetFilePath%"
 exit /b 0
 
+:: Convert the file with link(%targetFilePath%) to UTF8 No BOM
 :convertFileToUTF8NoBom
     powershell -Command "$MyRawString = Get-Content -Raw %targetFilePath%";$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False; [System.IO.File]::WriteAllLines('%targetFilePath%', $MyRawString, $Utf8NoBomEncoding)
+exit /b 0
+
+:windowOKMessage
+    %nodejsPath%bin\qmsg /i i /m "Copy and convert files from PHP to NODE SUCCESSFULLY!"
+exit /b 0
+
+:windowFAILMessage
+    %nodejsPath%bin\qmsg /i i /m "Copy and convert files from PHP to NODE FAIL!"
 exit /b 0
