@@ -70,6 +70,8 @@ set phpPath=c:\inetpub\wwwroot\PHP\
     @REM :: GetAndReplace values to make init.js from init.inc
     set gVal1=unset
     call :getAndReplace
+
+    call :convertFileToUTF8NoBom
 exit /b 0
 
 :: Copy PHP setting files
@@ -152,5 +154,9 @@ exit /b 0
 :replaceUsingPS
     set search=%~1
     set newValue=%~2
-    powershell -Command "(gc %targetFilePath%) -replace '%search%', '%newValue%' | Out-File -encoding default %targetFilePath%"
+    powershell -Command "(gc %targetFilePath%) -replace '%search%', '%newValue%' | Out-File -encoding utf8 %targetFilePath%"
+exit /b 0
+
+:convertFileToUTF8NoBom
+    powershell -Command "$MyRawString = Get-Content -Raw %targetFilePath%";$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False; [System.IO.File]::WriteAllLines('%targetFilePath%', $MyRawString, $Utf8NoBomEncoding)
 exit /b 0
