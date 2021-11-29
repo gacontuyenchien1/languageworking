@@ -112,7 +112,8 @@ exit /b 0
 :getAndReplace
     setlocal EnableDelayedExpansion
         :: Hard set for {APP_ROOT}
-        set nodejsPathDoubleSlash=!nodejsPath:\=\\!
+        set nodejsPathNoLastSlash=!nodejsPath:~0,-1!
+        set nodejsPathDoubleSlash=!nodejsPathNoLastSlash:\=\\!
         call :replaceUsingPS {!replaceNames[11]!},!nodejsPathDoubleSlash!,!initJSFilePath!
         :: Get all values to confValues array
         for /l %%i in (1,1,%countNames%) do (
