@@ -1,35 +1,22 @@
 -- Script: MCT_CreateTables.sql.
--- Description: MCT_CreateTables.sql v2.00 follow by quyqv design v0.5.
+-- Description: MCT_CreateTables.sql v2.10 follow by quyqv design v0.5. Create tables in the existed database.
+-- Updates:
+---- 23/12/2021: v2.11 ACCOUNT.PASSWORD from VARCHAR(30) -> VARCHAR(64): save a SHA256 hash.
 -- DB server: Microsoft SQl server.
 -- Created date: 03/12/2021.
--- Last updated: 10/12/2021.
+-- Last updated: 23/12/2021.
 -- Author: trongtd@meta-vi.vn.
 
--- Create the database.
-
-USE MASTER
-GO
-
-IF NOT EXISTS (
-   SELECT NAME
-   FROM sys.databases
-   WHERE NAME = N'MCTProject'
-)
-CREATE DATABASE [MCTProject]
-GO
-
-USE [MCTProject]
-GO
+-- Create tables in the existed database
 
 ---
 --- Drop tables
 ---
 
-DROP TABLE IF EXISTS dbo.CHAT_PARTICIPANT;
 DROP TABLE IF EXISTS dbo.CHAT_MESSAGE;
+DROP TABLE IF EXISTS dbo.GROUP_PARTICIPANT;
 DROP TABLE IF EXISTS dbo.CALL_PARTICIPANT;
-DROP TABLE IF EXISTS dbo.CHAT_ROOM;
-DROP TABLE IF EXISTS dbo.CALL_GROUP;
+DROP TABLE IF EXISTS dbo.[GROUP];
 DROP TABLE IF EXISTS dbo.CONTACT;
 DROP TABLE IF EXISTS dbo.ACCOUNT;
 
@@ -43,10 +30,10 @@ DROP TABLE IF EXISTS dbo.ACCOUNT;
 CREATE TABLE dbo.ACCOUNT(
 	ACCOUNT_ID INT NOT NULL,
 	USER_NAME VARCHAR(30) NOT NULL,
-	PASSWORD VARCHAR(30) NOT NULL,
+	PASSWORD VARCHAR(64) NOT NULL,
 	LAST_TIME_LOG_IN DATETIME NOT NULL,
 	STATUS SMALLINT NOT NULL,
-	FIRT_NAME NVARCHAR(30) NOT NULL,
+	FIRST_NAME NVARCHAR(30) NOT NULL,
 	LAST_NAME NVARCHAR(30) NOT NULL,
 	GENDER SMALLINT NOT NULL,
 	ROLE SMALLINT NOT NULL,
