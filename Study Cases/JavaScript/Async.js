@@ -19,12 +19,17 @@ displayResult( 3, 4, addition);
 //#region Promise
 console.log("=====================");
 console.log("**Promise Function**\n");
-let promise = new Promise( function(resolve, reject){
-    console.log("let promise");
-    resolve("resolve 0");
-});
 
-promise.then(
+function runner(){
+    return new Promise( function(resolve, reject){
+        console.log("let promise");
+        resolve("resolve 0");
+    });
+}
+
+console.log("Promise start!\n");
+
+runner().then(
     ( mess ) => {
         console.log("===============");
         console.log("**Promise.then() 1**");
@@ -55,6 +60,8 @@ let asyncF = async function(){
     console.log("let asyncF");
     return "Async resolve0";
 };
+
+console.log("Before async");
 
 asyncF().then(
     ( mess ) => {
